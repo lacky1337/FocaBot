@@ -1,4 +1,4 @@
-reload = require('require-reload')(require)
+areload = require('require-reload')(require)
 { delay, parseTime } = Core.util
 { commands } = Core
 
@@ -8,24 +8,22 @@ class PlayerCommands
     { @permissions } = Core
 
     # Play
-    @registerCommand 'play', { djOnly] }, (m, args, d, player)=>
+    @registerCommand 'play', { djOnly }, (m, args, d, player)=>
       # Check Voice Connection
       vc = m.member.getVoiceChannel()
       unless vc
         return m.reply 'You must be in a voice channel to request songs.'
-      # Check voice channel name
-      if d.data.voiceChannel isnt '*' and d.data.voiceChannel isnt vc.name and
+      # Check voice channel name      if d.data.voiceChannel isnt '*' and d.data.voiceChannel isnt vc.name and
          not @permissions.isAdmin(m.member)
         return m.reply "You're not allowed to use the bot on the current voice channel."
-      # Check item limit
+i      # Check item limit
       if @util.checkItemCountLimit(player, m.member)
         return m.reply 'You have exceeded the limit of items in queue for this server.'
       # Process request
       q = args.split('|')[0].trim()
       q = m.attachments[0].url if m.attachments[0]
       filters = (args.split('|')[1] or '').trim()
-      time = 0
-      if args.match(/@\s?(\d+(:\d+)*)/)
+      time = 0      if args.match(/@\s?(\d+(:\d+)*)/)
         time = parseTime(args.match(/@\s?(\d+(:\d+)*)/)[1])
         q = q.replace(/@\s?(\d+(:\d+)*)/, '').trim()
         filters = filters.replace(/@\s?(\d+(:\d+)*)/, '').trim()
@@ -38,7 +36,7 @@ class PlayerCommands
             return m.reply 'Invalid start time.'
           vid.startAt = time
           vid.filters = filters
-          @util.processInfo(vid, m, player, false, vc)
+l          @util.processInfo(vid, m, player, false, vc)
         else
           # Playlist
           return m.reply('Only DJs can add playlists.') unless Core.permissions.isDJ(m.member)
@@ -77,7 +75,7 @@ class PlayerCommands
       # Vote skip if enabled
       commands.run('voteskip', m, args)
 
-    @registerCommand 'voteskip', { aliases: ['vs'] }, (msg, args, d, player)=>
+    @registerCommand 'voteskip', { djOnly }, (msg, args, d, player)=>
       msg.delete() if d.data.autoDel
       return msg.reply 'You are not allowed to skip songs.' unless d.data.voteSkip
       return msg.reply 'You must be in a voice channel.' unless msg.member.getVoiceChannel()
@@ -99,7 +97,7 @@ class PlayerCommands
         player.skip()
 
     # Clear / Stop
-    @registerCommand 'clear', { aliases: ['stop'], djOnly: true }, (msg, a, d, player)=>
+    @registerCommand 'clear', {  djOnly: true }, (msg, a, d, player)=>
       player.stop()
       msg.channel.sendMessage 'Queue cleared.'
 
