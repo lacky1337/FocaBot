@@ -8,7 +8,7 @@ class PlayerCommands
     { @permissions } = Core
 
     # Play
-    @registerCommand 'play', { aliases: ['p', 'request', 'add'] }, (m, args, d, player)=>
+    @registerCommand 'play', { djOnly] }, (m, args, d, player)=>
       # Check Voice Connection
       vc = m.member.getVoiceChannel()
       unless vc
